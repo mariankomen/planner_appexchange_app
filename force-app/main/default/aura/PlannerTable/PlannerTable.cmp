@@ -1,0 +1,65 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+
+
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="data" type="Object" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols slds-tree slds-table_tree" role="treegrid">
+        <thead>
+            <tr class="slds-line-height_reset">
+                <aura:iteration items="{!v.columns}" var="column">
+                    <th style="{! 'width:' + column.initialWidth + 'px'}" scope="col">
+                        <div class="slds-truncate" title="{!column.label}">{!column.label}</div>
+                    </th>
+                </aura:iteration>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <aura:iteration items="{!v.data}" var="data">
+                <tr aria-expanded="true" aria-level="1" aria-posinset="2" aria-selected="false" aria-setsize="4" class="slds-hint-parent">
+
+                    <th class="slds-tree__item" data-label="Account Name" scope="row">
+                        <button class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small" aria-hidden="true" tabindex="-1" title="Collapse Acme Corporation">
+                            <lightning:icon iconName="utility:chevronright" size="x-small" alternativeText="expand"
+                                title="expand" />
+                        </button>
+                        <div class="slds-truncate" title="Name">
+                            <a href="#" tabindex="-1">{!data.Name}</a>
+                        </div>
+                    </th>
+                    <td data-label="Employees" role="gridcell">
+                        <div class="slds-truncate" title="10,000">10,000</div>
+                    </td>
+                    <td data-label="Phone Number" role="gridcell">
+                        <div class="slds-truncate" title="837-555-1212">837-555-1212</div>
+                    </td>
+
+                </tr>
+
+                <aura:iteration items="{!data.childs}" var="child">
+                    <tr aria-level="2" aria-posinset="1" aria-selected="false" aria-setsize="1" class="slds-hint-parent">
+                        <th class="slds-tree__item" data-label="Account Name" scope="row">
+                            <button class="slds-button slds-button_icon slds-button_icon-x-small slds-m-right_x-small slds-is-disabled" aria-hidden="true" tabindex="-1" title="Expand Acme Corporation (Oakland)">
+                                <lightning:icon iconName="utility:chevronright" alternativeText="expand"
+                                    title="expand" />
+                            </button>
+                            <div class="slds-truncate" title="Name">
+                                <a href="#" tabindex="-1">{!child.Name}</a>
+                            </div>
+                        </th>
+                        <td data-label="Employees" role="gridcell">
+                            <div class="slds-truncate" title="745">745</div>
+                        </td>
+                        <td data-label="Phone Number" role="gridcell">
+                            <div class="slds-truncate" title="837-555-1212">837-555-1212</div>
+                        </td>
+                    </tr>
+                </aura:iteration>
+            </aura:iteration>
+        </tbody>
+    </table>
+
+</aura:component>

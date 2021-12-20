@@ -1,0 +1,233 @@
+<template>
+  <div class="slds-modal slds-fade-in-open slds-backdrop">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <lightning-button-icon icon-name="utility:close" alternative-text="Close this window" size="large"
+          variant="bare-inverse" onclick={closeModal} class="slds-modal__close">
+        </lightning-button-icon>
+        <h2>Planner Configuration</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around_medium content-section">
+        <!-- <div>
+                    <lightning-progress-indicator current-step={step}  type="path" variant="base">
+                        <lightning-progress-step label="Choose Object" value="step-0"></lightning-progress-step>
+                        <lightning-progress-step label="Choose First Field" value="step-1"></lightning-progress-step>
+                        <lightning-progress-step label="Choose Second Field" value="step-2"></lightning-progress-step>
+                    </lightning-progress-indicator>
+                </div> -->
+
+        <template if:true={objectSection}>
+          <template if:false={objectsLoaded}>
+            <div class="slds-theme_default object-spinner">
+              <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+          </template>
+          <template if:true={objectsLoaded}>
+            <div class="section-header">Please, choose parent object that will be used in Planner</div>
+            <lightning-input type="text" class="filtering-input" placeholder="Select an Option…"
+              onchange={handleObjectFiltering}> </lightning-input>
+            <ul class="slds-has-dividers_around-space">
+              <template for:each={allFilteredObjects} for:item="obj">
+                <li class="slds-item" key={obj.name} value={obj.labelApi} onclick={handleSelectedObjects}>
+                  <lightning-input type="radio" label={obj.labelApi} data-id={obj.name} value={obj.name}
+                    checked={obj.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+            <!-- <lightning-radio-group name="radioGroup"
+                            label=""
+                            options={allObjects}
+                            value={selectedObject}
+                            onchange={handleSelectedObject}
+                            type="radio"></lightning-radio-group> -->
+          </template>
+        </template>
+
+        <template if:true={relationshipSection}>
+          <template if:true={objectsLoaded}>
+            <div style="margin-bottom: 3%" class="section-header">Please, choose type of relationship that will be used
+              in Planner</div>
+            <ul class="slds-has-dividers_around-space">
+              <template for:each={allRelationShipTypes} for:item="rel">
+                <li class="slds-item" key={rel.name} value={rel.name} onclick={handleSelectedRelationship}>
+                  <lightning-input type="radio" label={rel.name} data-id={rel.name} value={rel.name}
+                    checked={rel.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </template>
+
+        <template if:true={junctionSection}>
+          <template if:false={objectsLoaded}>
+            <div class="slds-theme_default object-spinner">
+              <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+          </template>
+          <template if:true={objectsLoaded}>
+            <div class="section-header">Please, choose junction object that will be used in Planner</div>
+            <lightning-input type="text" class="filtering-input" placeholder="Select an Option…"
+              onchange={handleJunctionObjectFiltering}> </lightning-input>
+            <ul class="slds-has-dividers_around-space">
+
+              <template for:each={allFilteredJunctionObjects} for:item="obj">
+                <li class="slds-item" key={obj.id} value={obj.name} onclick={handleSelectedJunctionObjects}>
+                  <lightning-input type="radio" label={obj.label} data-id={obj.name} value={obj.name}
+                    checked={obj.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </template>
+
+        <template if:true={junctionRelatedObjectSection}>
+          <template if:false={objectsLoaded}>
+            <div class="slds-theme_default object-spinner">
+              <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+          </template>
+          <template if:true={objectsLoaded}>
+            <div class="section-header">Please, choose junction related object that will be used in Planner</div>
+            <lightning-input type="text" class="filtering-input" placeholder="Select an Option…"
+              onchange={handleJunctionRelateedObjectFiltering}>
+            </lightning-input>
+            <ul class="slds-has-dividers_around-space">
+              <template for:each={allFilteredJunctionRelatedObjects} for:item="obj">
+                <li class="slds-item" key={obj.name} value={obj.name} onclick={handleSelectedJunctionRelatedObjects}>
+                  <lightning-input type="radio" label={obj.label} data-id={obj.name} value={obj.name}
+                    checked={obj.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </template>
+
+        <template if:true={improvementObjectSection}>
+          <template if:false={objectsLoaded}>
+            <div class="slds-theme_default object-spinner">
+              <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+          </template>
+          <template if:true={objectsLoaded}>
+            <div class="section-header">Please select additional objects to display detailed information on Peeklogic Planner report:</div>
+            <lightning-input type="text" class="filtering-input" placeholder="Select an Option…"
+              onchange={handleImprovementObjectFiltering}>
+            </lightning-input>
+            <ul class="slds-has-dividers_around-space">
+              <template for:each={allFilteredImprovementObjects} for:item="obj">
+                <li class="slds-item" key={obj.name} value={obj.labelApi} onclick={handleSelectedImprovementObjects}>
+                  <lightning-input type="radio" label={obj.labelApi} data-id={obj.name} value={obj.name}
+                    checked={obj.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </template>
+
+        <template if:true={fieldReferenceSection}>
+          <template if:false={objectsLoaded}>
+            <div class="slds-theme_default object-spinner">
+              <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+          </template>
+          <template if:true={objectsLoaded}>
+            <div class="section-header">Please, choose field that will be used in Planner</div>
+            <lightning-input type="text" class="filtering-input" placeholder="Select an Option…"
+              onchange={handleRefenceFieldFiltering}> </lightning-input>
+            <ul class="slds-has-dividers_around-space">
+              <template for:each={allFilteredRefernceFields} for:item="field">
+                <li class="slds-item" key={field.name} value={field.labelApi} onclick={handleSelectedRefenceField}>
+                  <lightning-input type="radio" label={field.labelApi} data-id={field.name} value={field.name}
+                    checked={field.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+            <!-- <lightning-radio-group name="radioGroup"
+                            label=""
+                            options={allObjects}
+                            value={selectedObject}
+                            onchange={handleSelectedObject}
+                            type="radio"></lightning-radio-group> -->
+          </template>
+        </template>
+
+        <template if:true={firstFieldSection}>
+          <template if:true={objectsLoaded}>
+            <div class="section-header">Please select start date for Peeklogic Resource Planner report:</div>
+            <lightning-input type="text" class="filtering-input" placeholder="Select an Option…"
+              onchange={handleFieldsFiltering}> </lightning-input>
+            <ul class="slds-has-dividers_around-space">
+              <template for:each={allFilteredFields} for:item="field">
+                <li class="slds-item" key={field.label} value={field.labelApi} onclick={handleSelectedFirstField}>
+                  <lightning-input type="radio" label={field.labelApi} data-id={field.name} value={field.name}
+                    checked={field.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </template>
+        <template if:true={secondFieldSection}>
+          <template if:true={objectsLoaded}>
+            <div class="section-header">Please select End date for Peeklogic Resource Planner report:</div>
+            <lightning-input type="text" class="filtering-input" placeholder="Select an Option…"
+              onchange={handleFieldsFiltering}> </lightning-input>
+            <ul class="slds-has-dividers_around-space">
+              <template for:each={allFilteredFields} for:item="field">
+                <li class="slds-item" key={field.label} value={field.labelApi} onclick={handleSelectedSecondField}>
+                  <lightning-input type="radio" label={field.labelApi} data-id={field.name} value={field.name}
+                    checked={field.value}> </lightning-input>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </template>
+      </div>
+      <div class="slds-modal__footer">
+        <template if:true={objectSection}>
+          <lightning-button label="Next" variant="brand" onclick={goToFieldrelationshipSection}></lightning-button>
+        </template>
+
+        <template if:true={relationshipSection}>
+          <lightning-button label="Previous" class="previous-button" variant="brand" onclick={goToObjects}>
+          </lightning-button>
+          <lightning-button label="Next" variant="brand" onclick={goToObjcetSelectionByTypeOfRelationship}>
+          </lightning-button>
+        </template>
+
+        <template if:true={junctionSection}>
+          <lightning-button label="Previous" class="previous-button" variant="brand"
+            onclick={goToFieldrelationshipSection}></lightning-button>
+          <lightning-button label="Next" variant="brand" onclick={goToJunctionRelateObjectsSection}></lightning-button>
+        </template>
+
+        <template if:true={junctionRelatedObjectSection}>
+          <lightning-button label="Previous" class="previous-button" variant="brand"
+            onclick={goToObjcetSelectionByTypeOfRelationship}></lightning-button>
+          <lightning-button label="Next" variant="brand" onclick={goToImprovementObjectsSection}></lightning-button>
+        </template>
+
+        <template if:true={improvementObjectSection}>
+          <lightning-button label="Previous" class="previous-button" variant="brand"
+            onclick={goToJunctionRelateObjectsSection}></lightning-button>
+          <lightning-button label="Next" variant="brand" onclick={goToFirstFieldSection}></lightning-button>
+        </template>
+
+        <template if:true={fieldReferenceSection}>
+          <lightning-button label="Previous" class="previous-button" variant="brand" onclick={goToObjects}>
+          </lightning-button>
+          <lightning-button label="Next" variant="brand" onclick={goToFirstFieldSection}></lightning-button>
+        </template>
+        <template if:true={firstFieldSection}>
+          <lightning-button label="Previous" class="previous-button" variant="brand" onclick={goToObjects}>
+          </lightning-button>
+          <lightning-button label="Next" variant="brand" onclick={goToSecondFieldSection}></lightning-button>
+        </template>
+        <template if:true={secondFieldSection}>
+          <lightning-button label="Previous" class="previous-button" variant="brand"
+            onclick={goToFirstFieldAfterSecond}></lightning-button>
+          <lightning-button label="Finish" variant="brand" onclick={handleFinish}></lightning-button>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>

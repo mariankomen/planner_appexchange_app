@@ -1,0 +1,299 @@
+<aura:component controller="PlannerController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="data" type="Object" />
+    <aura:attribute name="dataWeekly" type="Object" />
+    <aura:attribute name="filteredData" type="Object" />
+    <aura:attribute name="gridExpandedRows" type="List" />
+    <aura:attribute name="allTabs" type="List" />
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="expandSwitcher" type="Boolean" />
+    <aura:attribute name="isFiltered" type="Boolean" default="false" />
+    <aura:attribute name="filterValue" type="String" default="None"/>
+    <aura:attribute name="IsSpinner" type="Boolean" />
+    <aura:attribute name='isGrayOut' type="Boolean" default="false"/>
+    <aura:attribute name="startDate" type="Object" />
+    <aura:attribute name="endDate" type="Object" />
+    <aura:attribute name="selectedTab" type="String" />
+    <aura:attribute name="showTestModal" type="Boolean" default="false" />
+    <aura:attribute name="listMonthInYear" type="String[]" />
+    <aura:attribute name="listPickLists" type="List" />
+    <aura:attribute name="mainPickListValues" type="List" />
+    <aura:attribute name="mainPickListValuesBeforeDraw" type="List" />
+    <aura:attribute name="selectedPickList" type="Object" />
+    <aura:attribute name="mainPickList" type="Object" />
+    <aura:attribute name="days" type="List" />
+    <aura:attribute name="months" type="List" />
+    <aura:attribute name="currentDate" type="Object" />
+    <aura:attribute name="mainDate" type="String" />
+    <aura:attribute name="optionsView" type="List" />
+    <aura:attribute name="selectedView" type="String"/>
+    <aura:attribute name="ptmIsOpen" type="boolean" default="false" />
+    <aura:attribute name="ptmTab" type="Object" />
+    <aura:attribute name="ptmId" type="String" />
+    <aura:attribute name="isOpenSetup" type="Boolean" default="false" />
+    <aura:attribute name="classOpenSetup" type="String" default="hideOpenSetup" />
+    <aura:attribute name="defaultColor" type="String" default="#000000" />
+    <aura:attribute name="mixedColor" type="String" default="#000000" />
+    <aura:attribute name="greyOutColor" type="String" default="#808080" />
+    <aura:attribute name="reloadComponent" type="Boolean" default="true" />
+    <aura:attribute name="allowPopUpOpen" type="Boolean" default="false" />
+    <aura:attribute name="showImp" type="Boolean" default="false" />
+    <aura:attribute name="multiPickValues" type="List" default="[]" />
+    <aura:attribute name="picklistEntryColor" type="Object" />
+
+    <aura:attribute name="options" type="List" default="[
+        { label: 'English', value: 'en' },
+        { label: 'German', value: 'de' },
+        { label: 'Spanish', value: 'es' },
+        { label: 'French', value: 'fr' },
+        { label: 'Italian', value: 'it' },
+        { label: 'Japanese', value: 'ja' }]"/>
+
+
+    <aura:attribute name="period" type="String" default="month"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <!-- <aura:handler name="change" value="{!v.currentDate}" action="{!c.handleChange}" />-->
+    <aura:handler name="change" value="{!v.selectedTab}" action="{!c.handleTabChange}" />
+    <aura:handler name="change" value="{!v.currentDate}" action="{!c.handleChange}" />
+    <aura:html tag="style">
+        :root { --greyOutColor: {!v.greyOutColor}; --colorDefault: {!v.defaultColor}; --mixedColor: {!v.mixedColor}; --color0:
+        {!v.mainPickListValues[0].color}; --color1: {!v.mainPickListValues[1].color}; --color2:
+        {!v.mainPickListValues[2].color}; --color3: {!v.mainPickListValues[3].color}; --color4:
+        {!v.mainPickListValues[4].color}; --color5: {!v.mainPickListValues[5].color}; --color6:
+        {!v.mainPickListValues[6].color}; --color7: {!v.mainPickListValues[7].color}; --color8:
+        {!v.mainPickListValues[8].color}; --color9: {!v.mainPickListValues[9].color}; --color10:
+        {!v.mainPickListValues[10].color}; --color11: {!v.mainPickListValues[11].color}; --color12:
+        {!v.mainPickListValues[12].color}; --color13: {!v.mainPickListValues[13].color}; --color14:
+        {!v.mainPickListValues[14].color}; --color15: {!v.mainPickListValues[15].color}; --color16:
+        {!v.mainPickListValues[16].color}; --color17: {!v.mainPickListValues[17].color}; --color18:
+        {!v.mainPickListValues[18].color}; --color19: {!v.mainPickListValues[19].color}; --color20:
+        {!v.mainPickListValues[20].color};--color21: {!v.mainPickListValues[21].color}; --color22:
+        {!v.mainPickListValues[22].color}; --color23: {!v.mainPickListValues[23].color}; }
+    </aura:html>
+    
+    <aura:if isTrue="{!v.showTestModal}">
+        <c:plannerConfiguration onclosemodal="{!c.openModelTest}" />
+    </aura:if>
+    
+    <div class="main_block">
+        <lightning:card title="Planner" iconName="standard:account">
+            <div class="slds-p-left_medium slds-p-right_medium d_flex_jcsb">
+                <div class='sub_main'>
+                    <lightning:buttonIcon
+                                          class="removeBorder"
+                                          iconName="utility:expand_alt"
+                                          size="large"
+                                          variant="bare"
+                                          onclick="{!c.expandSwitcher}"
+                                          />
+                    <lightning:buttonIcon
+                                          class="removeBorder"
+                                          iconName="utility:refresh"
+                                          size="large"
+                                          variant="bare"
+                                          onclick="{!c.refresh}"
+                                          />
+                </div>
+                
+                <lightning:buttonIcon
+                                      class="removeBorder"
+                                      iconName="utility:setup"
+                                      size="large"
+                                      variant="bare"
+                                      onclick="{!c.setup}"
+                                      />
+            </div>
+            
+            <div class="slds-p-bottom_x-small began_main">
+                <div class="main_head">
+                    <lightning:buttonIcon
+                                          class="slds-p-right_x-small removeBorder"
+                                          iconName="utility:chevronleft"
+                                          variant="bare"
+                                          onclick="{!c.goBackInTime}"
+                                          />
+                    <div class="date_shower" onclick="{!c.currentDate}">
+                        <aura:if isTrue="{!v.selectedView == '1'}">
+                            <div class="slds-text-title_caps">{!v.currentDate._month + ' ' + v.currentDate._day + ', ' + v.currentDate._year}</div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.selectedView == '2'}">
+                            <div class="slds-text-title_caps">{!v.currentDate._year + ' ' + v.currentDate.weekRange}</div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.selectedView == '3'}">
+                            <div class="slds-text-title_caps">{!v.currentDate._year + ' ' + v.currentDate._month}</div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.selectedView == '4'}">
+                        	<div class="slds-text-title_caps">{!v.currentDate._year}</div>
+                        </aura:if>
+                    </div>
+                    <lightning:buttonIcon class="slds-p-left_x-small removeBorder"
+                                          iconName="utility:chevronright"
+                                          variant="bare"
+                                          onclick="{!c.goToTheFuture}"
+                                          />
+                </div>
+            </div>
+            
+            <div class="filters_block">
+                <div class="filters_subblock">
+                    <div class="{!v.classOpenSetup}" id='doesSetupOpen'>
+                        <lightning:select
+                                          label="View"
+                                          class="slds-p-left_medium slds-p-bottom_medium"
+                                          value="{!v.selectedView}"
+                                          onchange="{!c.changedView}"
+                                          >
+                            <aura:iteration items="{!v.optionsView}" var="option">
+                                <option
+                                        class="slds-dropdown__item"
+                                        text="{!option.label}"
+                                        value="{!option.id}"
+                                        selected="{!option.selected}"
+                                        />
+                            </aura:iteration>
+                        </lightning:select>
+                        
+                        <aura:if isTrue="{!not(v.isFiltered)}">
+                            <lightning:select
+                                              label="Pick List"
+                                              class="slds-p-left_medium slds-p-bottom_medium"
+                                              onchange="{!c.changeMainPickList}"
+                                              value="{!v.selectedPickList}"
+                                              >
+                                <aura:iteration items="{!v.listPickLists}" var="picklist">
+                                    <option
+                                            selected="{!picklist.apiName == v.mainPickList }"
+                                            class="slds-dropdown__item"
+                                            text="{!picklist.label}"
+                                            value="{!picklist.apiName}"
+                                            />
+                                </aura:iteration>
+                            </lightning:select>
+                        </aura:if>
+                        
+                        <lightning:select
+                                          label="Filter By"
+                                          class="slds-p-left_medium slds-p-bottom_medium"
+                                          onchange="{!c.filterByPickListValue}" 
+                                          value="{!v.filterValue}"
+                                          >
+                            <aura:iteration items="{!v.mainPickListValues}" var="picklist">
+                                <option class="slds-dropdown__item" text="{!picklist.label}" value="{!picklist.apiName}" />
+                            </aura:iteration>
+                        </lightning:select>
+                        
+                    </div>    
+                    <div class="{!v.classOpenSetup}" id="doestSetupopenSec">
+                        <div class="d_block">
+                        	<lightning:input onchange='{!c.grayOutPast}' checked="{!v.isGrayOut}" type="checkbox" label="Gray Out Past" aura:id="grayOut"/>
+                        	<lightning:input onchange='{!c.showImprovements}' checked="{!v.showImp}" type="checkbox" label="Show Improvements" aura:id="showImprove"/>
+                        </div>
+                        <!-- <div class="multypickllist">
+                            <lightning:dualListbox  name="languages"
+                                                    label= "Select Languages"
+                                                    sourceLabel="Available"
+                                                    selectedLabel="Selected"
+                                                    value="{! v.multiPickValues}"
+                                                    fieldLevelHelp="Select your preferred languages"
+                                                    options="{!v.options}"
+                                                    onchange="{! c.handleMulipicklist }"/>
+                        </div> -->
+                    </div>
+                </div>
+                <div aura:id="openSetup" class="{!v.classOpenSetup}" id="setup_styles">
+                    <article class="{!v.classOpenSetup + ' slds-card article_cl'}">
+                        <div class="slds-card__header slds-grid">
+                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                <div class="slds-media__figure">
+                                    <span class="slds-icon_container slds-icon-standard-account" title="Pick List Colors">
+                                        <lightning:icon iconName="standard:brand" />
+                                        <span class="slds-assistive-text">Pick List Colors</span>
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                    <h2 class="slds-card__header-title">
+                                        <span>Pick List Colors</span>
+                                    </h2>
+                                </div>
+                            </header>
+                        </div>
+                        <div class="slds-card__body colorPickers">
+                            <aura:iteration items="{!v.mainPickListValues}" var="value">
+                                <aura:if isTrue="{!value.apiName != 'None'}">
+                                    <div class="d_flex_fldc">
+                                        <div title="{!value.label}"
+                                             class="{!v.classOpenSetup + ' slds-text-title colorPickLabel'}"
+                                             >
+                                            {!value.label}
+                                        </div>
+                                        <div class="width10em">
+                                            <lightning:input
+                                                             onchange="{!c.handleColor}"
+                                                             class="{!v.classOpenSetup}"
+                                                             type="color"
+                                                             label="{!value.apiName}"
+                                                             value="{!value.color == null ? '#000000' : value.color}"
+                                                             variant="label-hidden"
+                                                             />
+                                        </div>
+                                    </div>
+                                </aura:if>
+                            </aura:iteration>
+                        </div>
+                    </article>
+                    
+                    <article class="{!v.classOpenSetup + ' slds-card mixedColorBlock'}">
+                        <div class="slds-card__body subMixedColorBlock">
+                            <div class="subMainMixedColorBlock">
+                                <div title="Mixed Color"
+                                     class="{!v.classOpenSetup + ' slds-text-title openSetupMix'}"
+                                     >
+                                    Mixed Color
+                                </div>
+                                <div class="width10em">
+                                    <lightning:input
+                                                     onchange="{!c.handleMixedColor}"
+                                                     class="{!v.classOpenSetup}"
+                                                     type="color"
+                                                     value="{!v.mixedColor}"
+                                                     label="Mixed Color"
+                                                     variant="label-hidden"
+                                                     />
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <lightning:tabset aura:id="tabSet" selectedTabId="{!v.selectedTab}" class="slds-p-top_xx-large">
+                <aura:iteration items="{!v.allTabs}" var="tab">
+                    <lightning:tab label="{!tab.label}" id="{!tab.apiName}">
+                        <lightning:treeGrid resizeColumnDisabled="true"
+                                            aura:id="treegrid_async"
+                                            class="slds-table--bordered slds-table--col-bordered slds-no-row-hover"
+                                            columns="{! v.columns }"
+                                            data="{! v.filteredData }"
+                                            expandedRows="{! v.gridExpandedRows }"
+                                            onrowaction="{! c.handleRowAction}"
+                                            keyField="id"
+                                            hideCheckboxColumn="true"
+                                            isLoading="{! v.isLoading }"
+                                            />
+                        <aura:if isTrue="{!and(v.filteredData[0] == undefined,!v.IsSpinner)}">
+                            <div class="slds-text-heading_large slds-text-align_center slds-text-color_weak mt1rem">
+                                No Records To Display
+                            </div>
+                        </aura:if>
+                    </lightning:tab>
+                </aura:iteration>
+                <lightning:tab iconName="utility:add" id="addTab"> </lightning:tab>
+            </lightning:tabset>
+        </lightning:card>
+    </div>
+    
+    <aura:if isTrue="{!v.IsSpinner}">
+        <lightning:spinner variant="brand" size="large" />
+    </aura:if>
+    
+    <c:editChildCmp id="{!v.ptmId}" isOpen="{!v.ptmIsOpen}" tab = "{!v.ptmTab}"></c:editChildCmp>
+</aura:component>

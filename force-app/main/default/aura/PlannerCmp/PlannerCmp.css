@@ -1,0 +1,261 @@
+.THIS lightning-primitive-header-actions {
+  display: none;
+}
+
+.THIS .slds-table {
+  table-layout: auto !important;
+  width: 100% !important;
+}
+
+.THIS .slds-tabs_default__item:nth-last-child(2):after {
+  display: none;
+}
+
+.THIS .slds-tabs_default__item:nth-last-child(2) svg {
+  padding: 10%;
+}
+
+.THIS .slds-tabs_default__item:nth-last-child(2):hover svg {
+  fill: rgb(0, 112, 210);
+}
+
+.THIS .slds-scrollable_y {
+  overflow: hidden;
+  width: 99.6% !important;
+}
+
+.THIS .slds-scrollable_x {
+  overflow: hidden;
+  width: 99.6% !important;
+}
+
+.THIS .slds-cell-fixed th {
+  width: 15px !important;
+}
+
+.THIS .slds-truncate {
+  font-size: 13px;
+}
+
+.THIS .slds-th__action {
+  font-size: 15px;
+  padding: 10px;
+}
+
+.THIS .greyOutColor{
+     background: linear-gradient(to bottom, var(--greyOutColor), var(--greyOutColor));
+}
+
+.THIS .Crossed {
+  background: linear-gradient(to bottom, var(--crossedColor), var(--crossedColor));
+}
+
+.THIS .Inactive {
+  background-color: white;
+}
+
+.THIS .hideOpenSetup {
+  display: none;
+}
+
+.THIS .showOpenSetup {
+  display: flex;
+}
+
+.THIS .dark {
+  transform: scale(2);
+}
+
+.THIS .width10em {
+  width: 10em;
+}
+
+.THIS .slds-button {
+  border: none;
+}
+
+.THIS .colorDefault {
+  background: linear-gradient(to bottom, var(--colorDefault), var(--colorDefault));
+}
+
+.THIS .mixedColor {
+  background: linear-gradient(to bottom, var(--mixedColor), var(--mixedColor));
+}
+
+.THIS .color0 {
+  background: linear-gradient(to bottom, var(--color0), var(--color0));
+}
+.THIS .color1 {
+  background: linear-gradient(to bottom, var(--color1), var(--color1));
+}
+.THIS .color2 {
+  background: linear-gradient(to bottom, var(--color2), var(--color2));
+}
+.THIS .color3 {
+  background: linear-gradient(to bottom, var(--color3), var(--color3));
+}
+.THIS .color4 {
+  background: linear-gradient(to bottom, var(--color4), var(--color4));
+}
+.THIS .color5 {
+  background: linear-gradient(to bottom, var(--color5), var(--color5));
+}
+.THIS .color6 {
+  background: linear-gradient(to bottom, var(--color6), var(--color6));
+}
+.THIS .color7 {
+  background: linear-gradient(to bottom, var(--color7), var(--color7));
+}
+.THIS .color8 {
+  background: linear-gradient(to bottom, var(--color8), var(--color8));
+}
+.THIS .color9 {
+  background: linear-gradient(to bottom, var(--color9), var(--color9));
+}
+.THIS .color10 {
+  background: linear-gradient(to bottom, var(--color10), var(--color10));
+}
+.THIS .color11 {
+  background: linear-gradient(to bottom, var(--color11), var(--color11));
+}
+.THIS .color12 {
+  background: linear-gradient(to bottom, var(--color12), var(--color12));
+}
+.THIS .color13 {
+  background: linear-gradient(to bottom, var(--color13), var(--color13));
+}
+.THIS .color14 {
+  background: linear-gradient(to bottom, var(--color14), var(--color14));
+}
+.THIS .color15 {
+  background: linear-gradient(to bottom, var(--color15), var(--color15));
+}
+.THIS .color16 {
+  background: linear-gradient(to bottom, var(--color16), var(--color16));
+}
+.THIS .color17 {
+  background: linear-gradient(to bottom, var(--color17), var(--color17));
+}
+.THIS .color18 {
+  background: linear-gradient(to bottom, var(--color18), var(--color18));
+}
+.THIS .color19 {
+  background: linear-gradient(to bottom, var(--color19), var(--color19));
+}
+.THIS .color20 {
+  background: linear-gradient(to bottom, var(--color20), var(--color20));
+}
+.THIS .color21 {
+  background: linear-gradient(to bottom, var(--color21), var(--color21));
+}
+.THIS .color22 {
+  background: linear-gradient(to bottom, var(--color22), var(--color22));
+}
+.THIS .color23 {
+  background: linear-gradient(to bottom, var(--color23), var(--color23));
+}
+
+.THIS .main_block{
+  width: 100%;
+}
+
+.THIS .sub_main {
+  width: 70px;
+  display: flex; 
+  justify-content: space-between;
+}
+.THIS .main_head {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+}
+.THIS .began_main {
+  display: flex;
+  margin-top: -40px; 
+  justify-content: space-around;
+}
+.THIS .date_shower {
+  font-size: 20px;
+  width: 15%;
+  display: flex;
+  justify-content: center;
+  padding: 10px 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 60%;
+  font-size: 11px;
+  cursor: pointer;
+}
+.THIS .filters_block {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.THIS .filters_subblock {
+  width: 50%;
+  display:flex;
+  flex-direction:column;
+}
+.THIS #doesSetupOpen {
+  width: 100%;
+}
+.THIS #doestSetupopenSec {
+  width: 100%;
+  padding-left:1rem;
+}
+.THIS .article_cl {
+  margin-top: 0.5rem;
+  width: 80%;
+  box-shadow: 0 0 10px rgb(0 0 0 / 30%);
+}
+.THIS .colorPickers {
+  display: flex; 
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.THIS .colorPickLabel {
+  width: 9em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.THIS .mixedColorBlock {
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  width: 15%;
+  box-shadow: 0 0 10px rgb(0 0 0 / 30%);
+}
+.THIS .subMixedColorBlock {
+  margin-left: 1.5rem;
+}
+.THIS .subMainMixedColorBlock {
+  flex-direction: column;
+  display: flex;
+}
+.THIS .openSetupMix {
+  width: 9em; 
+  overflow: hidden; 
+  white-space: nowrap; 
+  text-overflow: ellipsis;
+}
+.THIS .mt1rem {
+  margin-top: 1rem;
+}
+
+.THIS .d_flex_jcsb {
+  display: flex;
+  justify-content: space-between;
+}
+.THIS .d_flex_fldc {
+  display: flex;
+  flex-direction: column;
+}
+
+.THIS .d_block{
+  display: block;
+}
+
+.THIS #setup_styles {
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+}

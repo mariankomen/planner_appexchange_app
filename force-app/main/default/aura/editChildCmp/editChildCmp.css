@@ -1,0 +1,16 @@
+.THIS .datesBlock {
+    flex-direction: column;
+    display: flex;
+    justify-content: space-around;
+}
+.THIS .mt11 {
+    margin-top:11px;
+}
+.THIS .footerSt {
+    margin: 0 -20px -15px -20px;
+}
+.THIS .footer_child {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
