@@ -76,69 +76,69 @@ public class PlannerControllerTest {
          
     }    
     
-     @isTest
-     public static void getSelectedObjectRecordsTest() {   
-        
-        DateTime now = DateTime.now();
-        DateTime firstDate = DateTime.newInstance(now.year(), now.month(), 1);
-        DateTime secondDate = DateTime.newInstance(now.year(), now.month(), 25);
-        Test.startTest();
-            List<Object> returnedDate = (List<Object>)JSON.deserializeUntyped(PlannerController.getSelectedObjectRecords('Campaign','week','{"_year":'+ Datetime.now().year() +', "countMonth":'+Datetime.now().addMonths(-1).month()+',"_day":'+Datetime.now().day()+'}'));
-        Test.stopTest();
-        System.assertEquals(1, returnedDate.size());
-     }
-
-     @isTest
-     public static void getPickListsTest() {     
-        Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
-        Schema.DescribeSObjectResult sobjectDescribe = gd.get('Account').getDescribe();
-        Map<String, Schema.SObjectField> fieldMap = sobjectDescribe.fields.getMap();
-        List<Schema.SObjectField> pickListFields = new List<Schema.SObjectField>();
-        for (Schema.SObjectField field : fieldMap.values()) {
-            DescribeFieldResult fieldDescribe = field.getDescribe();
-            if (fieldDescribe.getType() == Schema.DisplayType.Picklist) {
-                pickListFields.add(field);
-            }
-        }
-        List<PickListWrapper> planerPickList = (List<PickListWrapper>)JSON.deserializeStrict(PlannerController.getPickLists('Account'), List<PickListWrapper>.class);
-        System.assertEquals(pickListFields.size(), planerPickList.size());
-
-     }
-     @isTest
-     public static void getPickListsEmptyTest() {       
-        Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
-        Schema.DescribeSObjectResult sobjectDescribe = gd.get('Contact').getDescribe();
-        Map<String, Schema.SObjectField> fieldMap = sobjectDescribe.fields.getMap();
-        List<Schema.SObjectField> pickListFields = new List<Schema.SObjectField>();
-        for (Schema.SObjectField field : fieldMap.values()) {
-            DescribeFieldResult fieldDescribe = field.getDescribe();
-            if (fieldDescribe.getType() == Schema.DisplayType.Picklist) {
-                pickListFields.add(field);
-            }
-        }
-        List<PickListWrapper> planerPickList = (List<PickListWrapper>)JSON.deserializeStrict(PlannerController.getPickLists('Contact'), List<PickListWrapper>.class);
-        System.assertEquals(pickListFields.size(), planerPickList.size());
-     }
+    @isTest
+    public static void getSelectedObjectRecordsTest() {   
     
-     @isTest
-     public static void saveMixedColorForTabTest() {       
-        Test.startTest();
-            PlannerController.saveMixedColorForTab('Campaign','#177FDA');
-        Test.stopTest();
-        Planner_Tab__c pt = Planner_Tab__c.getValues('Campaign');
+    DateTime now = DateTime.now();
+    DateTime firstDate = DateTime.newInstance(now.year(), now.month(), 1);
+    DateTime secondDate = DateTime.newInstance(now.year(), now.month(), 25);
+    Test.startTest();
+        List<Object> returnedDate = (List<Object>)JSON.deserializeUntyped(PlannerController.getSelectedObjectRecords('Campaign','week','{"_year":'+ Datetime.now().year() +', "countMonth":'+Datetime.now().addMonths(-1).month()+',"_day":'+Datetime.now().day()+'}'));
+    Test.stopTest();
+    System.assertEquals(1, returnedDate.size());
+    }
 
-        System.assertEquals('#177FDA', pt.Crossed_Color__c);
+    @isTest
+    public static void getPickListsTest() {     
+    Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
+    Schema.DescribeSObjectResult sobjectDescribe = gd.get('Account').getDescribe();
+    Map<String, Schema.SObjectField> fieldMap = sobjectDescribe.fields.getMap();
+    List<Schema.SObjectField> pickListFields = new List<Schema.SObjectField>();
+    for (Schema.SObjectField field : fieldMap.values()) {
+        DescribeFieldResult fieldDescribe = field.getDescribe();
+        if (fieldDescribe.getType() == Schema.DisplayType.Picklist) {
+            pickListFields.add(field);
+        }
+    }
+    List<PickListWrapper> planerPickList = (List<PickListWrapper>)JSON.deserializeStrict(PlannerController.getPickLists('Account'), List<PickListWrapper>.class);
+    System.assertEquals(pickListFields.size(), planerPickList.size());
 
-     }
+    }
+    @isTest
+    public static void getPickListsEmptyTest() {       
+    Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
+    Schema.DescribeSObjectResult sobjectDescribe = gd.get('Contact').getDescribe();
+    Map<String, Schema.SObjectField> fieldMap = sobjectDescribe.fields.getMap();
+    List<Schema.SObjectField> pickListFields = new List<Schema.SObjectField>();
+    for (Schema.SObjectField field : fieldMap.values()) {
+        DescribeFieldResult fieldDescribe = field.getDescribe();
+        if (fieldDescribe.getType() == Schema.DisplayType.Picklist) {
+            pickListFields.add(field);
+        }
+    }
+    List<PickListWrapper> planerPickList = (List<PickListWrapper>)JSON.deserializeStrict(PlannerController.getPickLists('Contact'), List<PickListWrapper>.class);
+    System.assertEquals(pickListFields.size(), planerPickList.size());
+    }
     
-     @isTest
-     public static void setMainPickListTest() {  
-        Test.startTest();
-            PlannerController.setMainPickList('Campaign','Status');
-        Test.stopTest();
-        Planner_Tab__c pt = Planner_Tab__c.getValues('Campaign');
-        System.assertEquals('Status', pt.Selected_Pick_List__c);
-     }
+    @isTest
+    public static void saveMixedColorForTabTest() {       
+    Test.startTest();
+        PlannerController.saveMixedColorForTab('Campaign','#177FDA');
+    Test.stopTest();
+    Planner_Tab__c pt = Planner_Tab__c.getValues('Campaign');
+
+    System.assertEquals('#177FDA', pt.Crossed_Color__c);
+
+    }
+
+    @isTest
+    public static void setMainPickListTest() {  
+    Test.startTest();
+        PlannerController.setMainPickList('Campaign','Status');
+    Test.stopTest();
+    Planner_Tab__c pt = Planner_Tab__c.getValues('Campaign');
+    System.assertEquals('Status', pt.Selected_Pick_List__c);
+    }
     
     @isTest
      public static void getAllPlannerTabsFromCustomSettingsTest() {       
