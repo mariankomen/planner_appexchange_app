@@ -2,7 +2,7 @@ public class PlannerController {
     public static final String namespacePrefix = String.valueOf(PlannerController.class).split('\\.', 2)[0];
     
     @AuraEnabled
-    public static String getSelectedObjectRecords(String selectedObjectApiName, String period, String selectedDate/*DateTime startDateTime, DateTime endtDateTime*/) {
+    public static String getSelectedObjectRecords(String selectedObjectApiName, String period, String selectedDate, String frontQuery/*DateTime startDateTime, DateTime endtDateTime*/) {
         String childFields = '';
         String condition = '';
         String soql = '';
@@ -41,14 +41,14 @@ public class PlannerController {
         Date dateEndPeriod = Date.newInstance((Integer)endPeriodCondition.Year(), (Integer)endPeriodCondition.Month(), (Integer)endPeriodCondition.Day());
         if(String.valueOf(s.fields.getMap().get(startDateField).getDescribe().getType()) == 'DATETIME'
            &&String.valueOf(e.fields.getMap().get(endDateField).getDescribe().getType()) == 'DATETIME'){
-            condition = '(' + selectedTab.Start_Date_Name__c + ' >= :startPeriodCondition AND ' + selectedTab.Start_Date_Name__c + ' <= :endPeriodCondition) OR ' + 
-                        '(' + selectedTab.End_Date_Name__c + ' >= :startPeriodCondition AND ' + selectedTab.End_Date_Name__c + ' <= :endPeriodCondition) OR ' + 
-                        '(' + selectedTab.Start_Date_Name__c + ' <= :startPeriodCondition AND ' + selectedTab.End_Date_Name__c + ' >= :endPeriodCondition)';
+            condition = '(' + selectedTab.Start_Date_Name__c + ' >= :startPeriodCondition AND ' + selectedTab.Start_Date_Name__c + ' <= :endPeriodCondition ' + frontQuery + ') OR ' + 
+                        '(' + selectedTab.End_Date_Name__c + ' >= :startPeriodCondition AND ' + selectedTab.End_Date_Name__c + ' <= :endPeriodCondition ' + frontQuery + ') OR ' + 
+                        '(' + selectedTab.Start_Date_Name__c + ' <= :startPeriodCondition AND ' + selectedTab.End_Date_Name__c + ' >= :endPeriodCondition ' + frontQuery + ')';
         } else if(String.valueOf(s.fields.getMap().get(startDateField).getDescribe().getType()) == 'DATE'
                   &&String.valueOf(e.fields.getMap().get(endDateField).getDescribe().getType()) == 'DATE'){
             condition = '(' + selectedTab.Start_Date_Name__c + ' >= :dateStartPeriod AND ' + selectedTab.Start_Date_Name__c + ' <= :dateEndPeriod) OR ' + 
                         '(' + selectedTab.End_Date_Name__c + ' >= :dateStartPeriod AND ' + selectedTab.End_Date_Name__c + ' <= :dateEndPeriod) OR ' + 
-                        '(' + selectedTab.Start_Date_Name__c + ' <= :dateStartPeriod AND ' + selectedTab.End_Date_Name__c + ' >= :dateEndPeriod)';
+                        '(' + selectedTab.Start_Date_Name__c + ' <= :dateStartPeriod AND ' + selectedTab.End_Date_Name__c + ' >= :dateEndPeriod ' + frontQuery + ')';
         } 
 
         String impovementQuery = '';
@@ -68,6 +68,7 @@ public class PlannerController {
             soql = String.format('SELECT Name,(SELECT {0} FROM {1} WHERE {2}) FROM {3}',new List<String>{ childFields, selectedTab.ChildObjectApiNameOut__c, condition, selectedTab.Object_Name__c });
             soql+= ' WITH SECURITY_ENFORCED';
         }
+        System.debug('soql: '+soql);
         System.debug('JSON.serialize(Database.query(soql)): '+JSON.serialize(Database.query(soql)));
         List<Object> forReturn = new List<Object>();
         for(Object obj : (List<Object>) JSON.deserializeUntyped(JSON.serialize(Database.query(soql)))) {
@@ -199,6 +200,7 @@ public class PlannerController {
                 }
             }
         }
+        System.debug(JSON.serialize(picklistData));
         return JSON.serialize(picklistData);
     }
 

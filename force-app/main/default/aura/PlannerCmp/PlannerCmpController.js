@@ -6,8 +6,12 @@
     
   	grayOutPast: function (cmp, event, helper) {
         sessionStorage.removeItem("currentDate");
-    	helper.getCurrentDate(cmp, event, helper);
+    	//helper.getCurrentDate(cmp, event, helper);
         helper.drawLine(cmp, cmp.get("v.mainPickListValuesBeforeDraw"));
+        
+        if(!cmp.get('v.multiFiltered')){
+            //helper.handleMult(cmp, event, helper);
+        }
   	},
     
     showImprovements: function (cmp, event, helper) {
@@ -201,6 +205,8 @@
     	cmp.set("v.currentDate", currentDate);
     	helper.getDays(cmp, event, helper);
         if(cmp.get("v.isFiltered")) helper.filterByPickListValue(cmp, event, helper);
+        if(!cmp.get('v.multiFiltered')) helper.handleMult(cmp, event, helper)
+
   	},
 
   	goToTheFuture: function (cmp, event, helper) {
@@ -275,6 +281,7 @@
     	cmp.set("v.currentDate", currentDate);
     	helper.getDays(cmp, event, helper);
         if(cmp.get("v.isFiltered")) helper.filterByPickListValue(cmp, event, helper);
+        if(!cmp.get('v.multiFiltered')) helper.handleMult(cmp, event, helper)
   	},
           
    	handleChange: function (cmp, event, helper) {
@@ -289,6 +296,7 @@
   	currentDate: function (cmp, event, helper) {
     	sessionStorage.removeItem("currentDate");
     	helper.getCurrentDate(cmp, event, helper);
+        if(!cmp.get("v.multiFiltered")) helper.handleMult(cmp, event, helper);
   	},
 
   	changedView: function (cmp, event, helper) {
@@ -308,6 +316,7 @@
         helper.getDays(cmp, event, helper);
         if(cmp.get("v.selectedTab") != null) helper.setData(cmp, event, helper);
         if(cmp.get("v.isFiltered")) helper.filterByPickListValue(cmp, event, helper);
+        if(!cmp.get("v.multiFiltered")) helper.handleMult(cmp, event, helper);
   	},
 
   	refresh: function (cmp, event, helper) {
@@ -317,5 +326,9 @@
   	handleExpandSwitcher: function (cmp, event, helper) {
     	let currentValue = event.getParam("value");
     	sessionStorage.setItem("expandSwitcher", currentValue);
-  	}
+  	},
+    handleMultipicklist: function (cmp, event, helper) {
+        cmp.set('v.multiValues', event.getParam("value"))
+        helper.handleMult(cmp, event, helper)
+    }
 });

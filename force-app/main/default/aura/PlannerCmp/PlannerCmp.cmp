@@ -40,14 +40,10 @@
     <aura:attribute name="showImp" type="Boolean" default="false" />
     <aura:attribute name="multiPickValues" type="List" default="[]" />
     <aura:attribute name="picklistEntryColor" type="Object" />
+    <aura:attribute name="multiFiltered" type="Boolean" default="true"/>
+    <aura:attribute name="multiValues" type="Object" default="{}"/>
 
-    <aura:attribute name="options" type="List" default="[
-        { label: 'English', value: 'en' },
-        { label: 'German', value: 'de' },
-        { label: 'Spanish', value: 'es' },
-        { label: 'French', value: 'fr' },
-        { label: 'Italian', value: 'it' },
-        { label: 'Japanese', value: 'ja' }]"/>
+    <aura:attribute name="multiPickOptions" type="List" default="[]"/>
 
 
     <aura:attribute name="period" type="String" default="month"/>
@@ -152,35 +148,44 @@
                                         />
                             </aura:iteration>
                         </lightning:select>
+                        <aura:if isTrue="{!v.multiFiltered}">
+                            <aura:if isTrue="{!not(v.isFiltered)}">
+                                <lightning:select
+                                                label="Pick List"
+                                                class="slds-p-left_medium slds-p-bottom_medium"
+                                                onchange="{!c.changeMainPickList}"
+                                                value="{!v.selectedPickList}"
+                                                >
+                                    <aura:iteration items="{!v.listPickLists}" var="picklist">
+                                        <option
+                                                selected="{!picklist.apiName == v.mainPickList }"
+                                                class="slds-dropdown__item"
+                                                text="{!picklist.label}"
+                                                value="{!picklist.apiName}"
+                                                />
+                                    </aura:iteration>
+                                </lightning:select>
+                            </aura:if>
                         
-                        <aura:if isTrue="{!not(v.isFiltered)}">
+                        
                             <lightning:select
-                                              label="Pick List"
-                                              class="slds-p-left_medium slds-p-bottom_medium"
-                                              onchange="{!c.changeMainPickList}"
-                                              value="{!v.selectedPickList}"
-                                              >
-                                <aura:iteration items="{!v.listPickLists}" var="picklist">
-                                    <option
-                                            selected="{!picklist.apiName == v.mainPickList }"
-                                            class="slds-dropdown__item"
-                                            text="{!picklist.label}"
-                                            value="{!picklist.apiName}"
-                                            />
+                                            label="Filter By"
+                                            class="slds-p-left_medium slds-p-bottom_medium"
+                                            onchange="{!c.filterByPickListValue}" 
+                                            value="{!v.filterValue}"
+                                            >
+                                <aura:iteration items="{!v.mainPickListValues}" var="picklist">
+                                    <option class="slds-dropdown__item" text="{!picklist.label}" value="{!picklist.apiName}" />
                                 </aura:iteration>
                             </lightning:select>
                         </aura:if>
-                        
-                        <lightning:select
-                                          label="Filter By"
-                                          class="slds-p-left_medium slds-p-bottom_medium"
-                                          onchange="{!c.filterByPickListValue}" 
-                                          value="{!v.filterValue}"
-                                          >
-                            <aura:iteration items="{!v.mainPickListValues}" var="picklist">
-                                <option class="slds-dropdown__item" text="{!picklist.label}" value="{!picklist.apiName}" />
-                            </aura:iteration>
-                        </lightning:select>
+                        <lightning:dualListbox name="languages"
+                           label= "Select Filters"
+                           sourceLabel="Available"
+                           selectedLabel="Selected"
+                           options="{!v.multiPickOptions}"
+                           onchange="{! c.handleMultipicklist }"
+                           class="muiltipicklistBlock"/>
                         
                     </div>    
                     <div class="{!v.classOpenSetup}" id="doestSetupopenSec">

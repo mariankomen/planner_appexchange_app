@@ -12,7 +12,7 @@
         helper.setTabs(cmp, event, helper);
         helper.setColors(cmp, event, helper);
         helper.setOptionsMonthOrYear(cmp, event, helper);
-        
+        helper.getFullPickListInfo(cmp, event, helper);
         // helper.getMultipicklistValues(cmp, event, helper)
     },
     
@@ -356,12 +356,34 @@
                             
                         }
                     }
+                    let listOfUnAddedDays = []
                     if(cmp.get('v.isGrayOut')){
-                        for(let i = 0; i<arr.length; i++){
-                            if(arr[i].date < new Date()){
-                                el[arr[i].day] = 'greyOutColor'
+                        
+                        const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+                        let daysWithoutRecorrd = []
+                        for(let char of WEEKDAYS) {
+                            let index = arr.findIndex(el => el.day == char)
+                            if(index == -1) {
+                                daysWithoutRecorrd.push(char)
+                            }
+                        }
+                        let indexOfLastDefined = WEEKDAYS.findIndex(el => el == arr[0].day)
+                        if(indexOfLastDefined > 0){
+                            for(let i = 1; i<=indexOfLastDefined; i++){
+                                listOfUnAddedDays.unshift({
+                                    day: daysWithoutRecorrd.reverse()[i-1],
+                                    count: 1,
+                                    color: arr[0].color,
+                                    date: this.addDays(new Date(arr[0].date),-i)
+                                })
+                            }
+                        }
+                        listOfUnAddedDays.push(...arr)
+                        for(let i = 0; i<listOfUnAddedDays.length; i++){
+                            if(listOfUnAddedDays[i].date <= new Date()){
+                                el[listOfUnAddedDays[i].day] = 'greyOutColor'
                             } else {
-                                el[arr[i].day] = arr[i].color
+                                el[listOfUnAddedDays[i].day] = listOfUnAddedDays[i].color
                             }
                         }
                         
@@ -370,7 +392,6 @@
                             el[arr[i].day] = arr[i].color
                         }
                     }
-                    
                     el["Start Date"] = new Date(Math.min.apply(null, el._children.map(item => this.addDays(new Date(item["Start Date"]),1)))).toLocaleString('en-US', {day: 'numeric', year: 'numeric', month: 'short', timeZone: 'UTC'})
                     el["End Date"] = new Date(Math.max.apply(null, el._children.map(item => this.addDays(new Date(item["End Date"]),1)))).toLocaleString('en-US', {day: 'numeric', year: 'numeric', month: 'short', timeZone: 'UTC'})
                 })          
@@ -953,7 +974,9 @@
                 return;
             }
         });
+        
         cmp.set("v.mixedColor", selectedTab.mixedColor);
+        data = data.filter(el => el[selectedTab['junction']]) //If line has no records than he will be hidden
         for (let entry of data) {
             let startRangeValues = new Array();
             let endRangeValues = new Array();
@@ -1014,7 +1037,8 @@
         action.setParams({
             selectedObjectApiName: cmp.get("v.selectedTab"),
             period: cmp.get("v.period"),
-            selectedDate: JSON.stringify(cmp.get("v.currentDate"))
+            selectedDate: JSON.stringify(cmp.get("v.currentDate")),
+            frontQuery: ''
         });
         action.setCallback(this, function (response) {
             let state = response.getState();
@@ -1378,6 +1402,70 @@
         })
         cmp.set('v.picklistEntryColor', mainObj)
         $A.enqueueAction(action);
-    }  
+    },
+    getFullPickListInfo: function(cmp, event, helper){
+        var action = cmp.get('c.getAllPicklistValues')
+        action.setCallback(this, function(response){
+            let state = response.getState();
+            if(state == "SUCCESS"){
+                let res = JSON.parse(response.getReturnValue());
+                cmp.set('v.multiPickOptions', res)
+                console.log("RESPONSE: ",res)
+            } else{
+                console.log('SOME ERROR!')
+            }
+        })
+
+        $A.enqueueAction(action);
+    },
+    handleMult: function(cmp, event, helper){
+        
+        cmp.set('v.multiFiltered', true)
+        const multiPickData = cmp.get('v.multiPickOptions')
+        let selectedValues =  cmp.get('v.multiValues')
+        // let selectedValues = event.getParam("value")
+        let queryStr = ''
+        if(selectedValues.length !== 0){
+            cmp.set('v.multiFiltered', false)
+        }
+        const prepareForBack = []
+        if(selectedValues.length !== 0){
+            selectedValues.forEach(el => {
+                let index = multiPickData.findIndex(item => item.value == el)
+                prepareForBack.push(multiPickData[index])
+            })
+            prepareForBack.forEach(el => {
+                queryStr += ` AND ${el.fieldName}  = '${el.value}' `
+            })
+            //queryStr = queryStr.substring(0, queryStr.length - 4)
+            console.log(queryStr)
+        }
+        
+
+        let action = cmp.get("c.getSelectedObjectRecords");
+        action.setParams({
+            selectedObjectApiName: cmp.get("v.selectedTab"),
+            period: cmp.get("v.period"),
+            selectedDate: JSON.stringify(cmp.get("v.currentDate")),
+            frontQuery: queryStr
+        });
+        action.setCallback(this, function (response) {
+            let state = response.getState();
+            if (state == "SUCCESS") {
+                let data = JSON.parse(response.getReturnValue());
+                this.setRecords(cmp, event, helper, data);
+                
+                cmp.set("v.IsSpinner", false);
+            } else if (state === "ERROR") {
+                var errors = response.getError();
+                if (errors) {
+                    console.error("Error message: " + JSON.stringify(errors));
+                } else {
+                    console.error("Unknown error");
+                }
+            }
+        });
+        $A.enqueueAction(action);
+    }
 
 });

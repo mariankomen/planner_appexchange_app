@@ -203,6 +203,7 @@
   padding-left:1rem;
 }
 .THIS .article_cl {
+  max-height: 9rem;
   margin-top: 0.5rem;
   width: 80%;
   box-shadow: 0 0 10px rgb(0 0 0 / 30%);
@@ -219,6 +220,7 @@
   text-overflow: ellipsis;
 }
 .THIS .mixedColorBlock {
+  max-height: 9rem;
   margin-top: 0.5rem;
   margin-left: 1rem;
   width: 15%;
@@ -252,6 +254,9 @@
 
 .THIS .d_block{
   display: block;
+}
+.THIS .muiltipicklistBlock{
+  margin: 0.5rem 0 0 3rem;
 }
 
 .THIS #setup_styles {

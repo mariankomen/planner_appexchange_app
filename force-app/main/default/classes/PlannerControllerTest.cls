@@ -83,7 +83,7 @@ public class PlannerControllerTest {
     DateTime firstDate = DateTime.newInstance(now.year(), now.month(), 1);
     DateTime secondDate = DateTime.newInstance(now.year(), now.month(), 25);
     Test.startTest();
-        List<Object> returnedDate = (List<Object>)JSON.deserializeUntyped(PlannerController.getSelectedObjectRecords('Campaign','week','{"_year":'+ Datetime.now().year() +', "countMonth":'+Datetime.now().addMonths(-1).month()+',"_day":'+Datetime.now().day()+'}'));
+        List<Object> returnedDate = (List<Object>)JSON.deserializeUntyped(PlannerController.getSelectedObjectRecords('Campaign','week','{"_year":'+ Datetime.now().year() +', "countMonth":'+Datetime.now().addMonths(-1).month()+',"_day":'+Datetime.now().day()+'}',''));
     Test.stopTest();
     System.assertEquals(1, returnedDate.size());
     }
